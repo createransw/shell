@@ -1,0 +1,122 @@
+#include <check.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include "../src/run.h"
+#include "./cmp_files.h"
+
+bool files_are_equal(const char *file1, const char *file2) {
+    FILE *f1 = fopen(file1, "rb");
+    FILE *f2 = fopen(file2, "rb");
+
+    if (f1 == NULL || f2 == NULL) {
+        fclose(f1);
+        fclose(f2);
+
+        return false;
+    }
+
+    int c1 = fgetc(f1);
+    int c2 = fgetc(f2);
+
+    while (c1 != EOF) {
+        if (c1 != c2) {
+            fclose(f1);
+            fclose(f2);
+            return false;
+        }
+
+        c1 = fgetc(f1);
+        c2 = fgetc(f2);
+    }
+
+    fclose(f1);
+    fclose(f2);
+    return true;
+}
+
+START_TEST(test_output) {
+    ck_assert(cmp_files("./tests/data/result", "./tests/data/result_r"));
+}
+END_TEST
+
+START_TEST(test_text) {
+    ck_assert(cmp_files("./tests/data/file.out", "./tests/data/file_r.out"));
+}
+END_TEST
+
+START_TEST(test_bin) {
+    ck_assert(cmp_files("./tests/data/file.bin", "./tests/data/file_r.bin"));
+}
+END_TEST
+
+START_TEST(test_who) {
+    ck_assert(cmp_files("./tests/data/who_am_i.txt", "./tests/data/who_am_i_r.txt"));
+}
+END_TEST
+
+START_TEST(test_who_not) {
+    ck_assert(cmp_files("./tests/data/who_am_i_not.txt", "./tests/data/who_am_i_not_r.txt"));
+}
+END_TEST
+
+START_TEST(test_dir) {
+    ck_assert(cmp_files("./tests/data/current_dir.txt", "./tests/data/current_dir_r.txt"));
+}
+END_TEST
+
+START_TEST(test_pwd) {
+    ck_assert(cmp_files("./tests/data/fpwd", "./tests/data/fpwd_r"));
+}
+END_TEST
+
+
+Suite* shell_suit() {
+    Suite *s;
+    TCase *tc_core;
+
+    s = suite_create("Shell");
+    tc_core = tcase_create("Core");
+
+    tcase_add_test(tc_core, test_output);
+    tcase_add_test(tc_core, test_text);
+    tcase_add_test(tc_core, test_bin);
+    tcase_add_test(tc_core, test_who);
+    tcase_add_test(tc_core, test_who_not);
+    tcase_add_test(tc_core, test_dir);
+    tcase_add_test(tc_core, test_pwd);
+
+    return s;
+}
+
+int main() {
+    int number_failed = 0;
+    Suite *s;
+    SRunner *sr;
+
+    s = shell_suit();
+    sr = srunner_create(s);
+
+    int f = open("./examples", O_RDONLY);
+    perror("nah");
+    if (f < 0) {
+        perror("no");
+    }
+    return 1;
+    fflush(stderr);
+    dup2(f, 0);
+    close(f);
+
+    f = open("./tests/data/result", O_WRONLY);
+    int out = dup(1);
+    dup2(f, 1);
+    close(f);
+    dialog();
+    dup2(out, 1);
+
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed = srunner_ntests_failed(sr);
+    srunner_free(sr);
+
+    return (number_failed == 0) ? 0 : 1;
+}
