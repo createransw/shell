@@ -104,9 +104,9 @@ int main() {
     int f;
     int f_e;
     if (process == 0) {
-        f = open("./tests/commands_r", O_RDONLY);
+        f = open("./tests/data/commands_r", O_RDONLY);
     } else {
-        f = open("./tests/commands", O_RDONLY);
+        f = open("./tests/data/commands", O_RDONLY);
     }
     dup2(f, 0);
     close(f);

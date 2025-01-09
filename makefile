@@ -24,5 +24,4 @@ clean:
 	rm -f $(NAME) $(OBJ) test_runner $(TEST_OBJ)
 
 test:
-	rm -f ./tests/data/*
 	./test_runner
