@@ -235,17 +235,12 @@ static void execute_cmd(tree t, int mpid) {
 void dialog(void) {
 	signal(SIGINT, SIG_IGN); /* SIG_INT can't stop shell */
 	signal(SIGUSR1, sigh);
-	putchar('$');
-	putchar(' ');
 	tr = new_tree();
 	while (1) {
 		if (tr == NULL)
 			break;
 		execute(tr, getpid());
 		remove_tree();
-		putchar('$');
-		putchar(' ');
 		tr = new_tree();
 	}
-	printf("%d errors\n", fail);
 }

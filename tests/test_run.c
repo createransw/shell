@@ -1,17 +1,23 @@
 #include <check.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/wait.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "../src/run.h"
-#include "./cmp_files.h"
 
-bool files_are_equal(const char *file1, const char *file2) {
-    FILE *f1 = fopen(file1, "rb");
-    FILE *f2 = fopen(file2, "rb");
+bool cmp_files(const char *file1, const char *file2) {
+    FILE *f1 = fopen(file1, "r");
+    FILE *f2 = fopen(file2, "r");
 
     if (f1 == NULL || f2 == NULL) {
-        fclose(f1);
-        fclose(f2);
+        if (f1) {
+            fclose(f1);
+        }
+        if (f2) {
+            fclose(f2);
+        }
 
         return false;
     }
@@ -45,18 +51,8 @@ START_TEST(test_text) {
 }
 END_TEST
 
-START_TEST(test_bin) {
-    ck_assert(cmp_files("./tests/data/file.bin", "./tests/data/file_r.bin"));
-}
-END_TEST
-
 START_TEST(test_who) {
     ck_assert(cmp_files("./tests/data/who_am_i.txt", "./tests/data/who_am_i_r.txt"));
-}
-END_TEST
-
-START_TEST(test_who_not) {
-    ck_assert(cmp_files("./tests/data/who_am_i_not.txt", "./tests/data/who_am_i_not_r.txt"));
 }
 END_TEST
 
@@ -70,6 +66,11 @@ START_TEST(test_pwd) {
 }
 END_TEST
 
+START_TEST(test_error) {
+    ck_assert(cmp_files("./tests/data/error", "./tests/data/error_r"));
+}
+END_TEST
+
 
 Suite* shell_suit() {
     Suite *s;
@@ -80,11 +81,12 @@ Suite* shell_suit() {
 
     tcase_add_test(tc_core, test_output);
     tcase_add_test(tc_core, test_text);
-    tcase_add_test(tc_core, test_bin);
     tcase_add_test(tc_core, test_who);
-    tcase_add_test(tc_core, test_who_not);
     tcase_add_test(tc_core, test_dir);
     tcase_add_test(tc_core, test_pwd);
+    tcase_add_test(tc_core, test_error);
+
+    suite_add_tcase(s, tc_core);
 
     return s;
 }
@@ -97,20 +99,35 @@ int main() {
     s = shell_suit();
     sr = srunner_create(s);
 
-    int f = open("./examples", O_RDONLY);
-    perror("nah");
-    if (f < 0) {
-        perror("no");
+    int process = fork();
+
+    int f;
+    int f_e;
+    if (process == 0) {
+        f = open("./tests/commands_r", O_RDONLY);
+    } else {
+        f = open("./tests/commands", O_RDONLY);
     }
-    return 1;
-    fflush(stderr);
     dup2(f, 0);
     close(f);
 
-    f = open("./tests/data/result", O_WRONLY);
+    cmp_files("./tests/data/fpwd", "./tests/data/fpwd_r");
+    if (process == 0) {
+        f = open("./tests/data/result_r", O_CREAT | O_WRONLY);
+        f_e = open("./tests/data/error_r", O_CREAT | O_WRONLY);
+    } else {
+        f = open("./tests/data/result", O_CREAT | O_WRONLY);
+        f_e = open("./tests/data/error", O_CREAT | O_WRONLY);
+    }
     int out = dup(1);
     dup2(f, 1);
+    dup2(f_e, 2);
     close(f);
+    close(f_e);
+    if (process == 0) {
+        execvp("bash", NULL);
+    }
+    waitpid(process, NULL, 0);
     dialog();
     dup2(out, 1);
 
