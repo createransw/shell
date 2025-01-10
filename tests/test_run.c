@@ -101,35 +101,28 @@ int main() {
 
     int process = fork();
 
-    int f;
-    int f_e;
+    FILE *f;
+    FILE *f_e;
     if (process == 0) {
-        f = open("./tests/data/commands_r", O_RDONLY);
+        freopen("./tests/data/commands_r", "r", stdin);
     } else {
-        f = open("./tests/data/commands", O_RDONLY);
+        freopen("./tests/data/commands", "r", stdin);
     }
-    dup2(f, 0);
-    close(f);
 
-    cmp_files("./tests/data/fpwd", "./tests/data/fpwd_r");
+    int out = dup(fileno(stdout));
     if (process == 0) {
-        f = open("./tests/data/result_r", O_CREAT | O_WRONLY);
-        f_e = open("./tests/data/error_r", O_CREAT | O_WRONLY);
+        freopen("./tests/data/result_r", "w", stdout);
+        freopen("./tests/data/error_r", "w", stderr);
     } else {
-        f = open("./tests/data/result", O_CREAT | O_WRONLY);
-        f_e = open("./tests/data/error", O_CREAT | O_WRONLY);
+        freopen("./tests/data/result", "w", stdout);
+        freopen("./tests/data/error", "w", stderr);
     }
-    int out = dup(1);
-    dup2(f, 1);
-    dup2(f_e, 2);
-    close(f);
-    close(f_e);
     if (process == 0) {
         execvp("bash", NULL);
     }
     waitpid(process, NULL, 0);
     dialog();
-    dup2(out, 1);
+    dup2(out, fileno(stdout));
 
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed(sr);
