@@ -17,8 +17,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y build-essentials check-devel check
+          sudo apt-get update
+          sudo apt-get install -y gcc make check
 
       - name: Build project
         run: make
