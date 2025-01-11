@@ -33,18 +33,22 @@ static int len_s(char *s) { /* counts length of string */
 }
 
 static void get_sym(void) { /* returns new symbol of line */
+    if (END_FLG) {
+        c = EOF;
+        return;
+    }
 	int i;
 	if (str[cur_str] == '\0') { /* end of word */
 		i = fscanf(stdin, scanf_option, str); /* read portion of symbols */
+        if (i == EOF) {
+            END_FLG = 1;
+            c = '\n';
+            return;
+        }
 		c = getchar(); /* read one symbol, may be \n or EOF */
 		if (i != 0) /* if stream contains not only \n */
 			i = len_s(str);
-        if (c != EOF) {
-		    str[i] = c;
-        }
-        else {
-            str[i] = '\n';
-        }
+		str[i] = c;
 		str[i + 1] = '\0';
 		/* c to check end of file */
 		cur_str = 0;
