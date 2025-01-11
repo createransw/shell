@@ -7,3 +7,4 @@ cat fil.out || pwd > fpwd
 cat fil.out && pwd >> fpwd
 cd ../
 cd ../
+exit
