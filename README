@@ -1,5 +1,7 @@
 [![Build Status](https://github.com/createransw/shell/actions/workflows/ci.yml/badge.svg)](https://github.com/createransw/shell/actions/workflows/ci.yml)
+
 Shell. 
+
 BNF:
 	<order>::= log; order[&,;] ! log& order[&,;] ! log[&,;] 
 	<log>::= conv|| log ! conv&& log ! conv <conv>::= cmd| conv ! 
