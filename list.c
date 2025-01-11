@@ -277,6 +277,8 @@ list new_list(void) {
 	new_buf();
 	new(&lst);
 	get_sym();
+    if (c == EOF)
+        return NULL;
 	start();
 	return lst;
 }
