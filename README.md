@@ -1,15 +1,15 @@
 [![Build Status](https://github.com/createransw/shell/actions/workflows/ci.yml/badge.svg)](https://github.com/createransw/shell/actions/workflows/ci.yml)
 
-Shell. 
+Shell.  
 
-BNF:
-	<order>::= log; order[&,;] ! log& order[&,;] ! log[&,;] 
-	<log>::= conv|| log ! conv&& log ! conv <conv>::= cmd| conv ! 
-	cmd <cmd>::= name ! name>file ! name>>file ! name<file ! 
-	name>file1<file2
-		! name>>file1<file2 ! name<file1>file2 ! 
-		! name<file1>>file2
-	<name>::= (order) ! prog
+BNF:  
+	<order>::= log; order[&,;] ! log& order[&,;] ! log[&,;]   
+	<log>::= conv|| log ! conv&& log ! conv <conv>::= cmd| conv !   
+	cmd <cmd>::= name ! name>file ! name>>file ! name<file !   
+	name>file1<file2  
+		! name>>file1<file2 ! name<file1>file2 !   
+		! name<file1>>file2  
+	<name>::= (order) ! prog  
 
 	prog - name of command with arguments 
 	closing ; or & in (...) is not allowed
