@@ -140,7 +140,6 @@ int start(void) { /*decides what to do next: read word or go to next line*/
 }
 
 int stop(void) {
-    printf("%c\n", '!');
     END_FLG = 1;
 	if (!str[0]) /* if there are still line in list */
 		end_of_line(); /* does all stuff for last word */
