@@ -39,7 +39,12 @@ static void get_sym(void) { /* returns new symbol of line */
 		c = getchar(); /* read one symbol, may be \n or EOF */
 		if (i != 0) /* if stream contains not only \n */
 			i = len_s(str);
-		str[i] = '\n';
+        if (c != EOF) {
+		    str[i] = c;
+        }
+        else {
+            str[i] = '\n';
+        }
 		str[i + 1] = '\0';
 		/* c to check end of file */
 		cur_str = 0;
