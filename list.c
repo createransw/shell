@@ -6,6 +6,7 @@
 #define buffer_block 5
 
 int SPEC_FLG = 1;
+int END_FLG = 0;
 int CUR_SEP = '"';
 
 static int c; /* current processing symbol */
@@ -38,15 +39,15 @@ static void get_sym(void) { /* returns new symbol of line */
 		c = getchar(); /* read one symbol, may be \n or EOF */
 		if (i != 0) /* if stream contains not only \n */
 			i = len_s(str);
-		str[i] = c;
+		str[i] = '\n';
 		str[i + 1] = '\0';
 		/* c to check end of file */
 		cur_str = 0;
 	}
-	if (c != EOF)
-	{
-		c = str[cur_str++];
-	}
+    if (c == EOF) {
+        END_FLG = 1;
+    }
+    c = str[cur_str++];
 }
 
 static int usual_sym(int c) { /* separates special symbols from usual */
@@ -130,6 +131,7 @@ int start(void) { /*decides what to do next: read word or go to next line*/
 }
 
 int stop(void) {
+    END_FLG = 1;
 	if (!str[0]) /* if there are still line in list */
 		end_of_line(); /* does all stuff for last word */
 	return 0; /* starts shlopivanie recursii */
@@ -269,7 +271,14 @@ void construct(void) {
 	start();
 }
 
+void remove_list() {
+	destroy(&lst);
+	new(&lst);
+}
+
 list new_list(void) {
+    if (END_FLG)
+        return NULL;
 	int i;
 	cur_str = size_str - 1;
 	for (i = 0; i < size_str; ++i) /* start with empty str */
@@ -277,13 +286,7 @@ list new_list(void) {
 	new_buf();
 	new(&lst);
 	get_sym();
-    if (c == EOF)
-        return NULL;
 	start();
 	return lst;
 }
 
-void remove_list() {
-	destroy(&lst);
-	new(&lst);
-}
