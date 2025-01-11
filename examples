@@ -1,6 +1,6 @@
-cd ..
-pwd echo homedir: $HOME username: $USER
-cd pwd
+cd ./tests/data
+pwd
+echo homedir: $HOME username: $USER
 pwd > fpwd
 who >> fpwd
 cat < file.in > file.out
@@ -26,8 +26,6 @@ ps
 echo a b c > f; cat f & ls
 echo a b c > f; echo >> f; cat<f
 (ls; pwd; who) | cat –n
-((((ls) | cat –n ) | cat –n) | sort –r)
-((((ls) | cat –n ) | cat –n) | sort –r) &
 (pwd|(cat –n|(cat |(cat) | sort -r ) | cat –n) |cat)
 (pwd|(cat –n|(cat |(cat))))
 cat f; date; pwd > zz
@@ -42,3 +40,5 @@ who |cat || ls
 cat nosuchname || pwd
 cat nosuchname && pwd
 (ls ) | sleep 10; pw
+cd ../
+cd ../
