@@ -31,7 +31,7 @@ static int len_s(char *s) { /* counts length of string */
 	return t - s;
 }
 
-static int get_sym(void) { /* returns new symbol of line */
+static void get_sym(void) { /* returns new symbol of line */
 	int i;
 	if (str[cur_str] == '\0') { /* end of word */
 		i = fscanf(stdin, scanf_option, str); /* read portion of symbols */
@@ -117,7 +117,7 @@ static void clear_buf() { /* remove old buffer and create new */
 
 int start(void) { /*decides what to do next: read word or go to next line*/
 	while ((c == '\t') || (c == ' ')) /* skip split symbols */
-		c = get_sym();
+		get_sym();
 	if (c == EOF) /* work complete */
 		return stop();
 	if (c == '\n') /* end of line, time to print, sort etc. */
@@ -130,7 +130,7 @@ int start(void) { /*decides what to do next: read word or go to next line*/
 }
 
 int stop(void) {
-	if (!str) /* if there are still line in list */
+	if (!str[0]) /* if there are still line in list */
 		end_of_line(); /* does all stuff for last word */
 	return 0; /* starts shlopivanie recursii */
 }
@@ -157,7 +157,7 @@ void replace_var(void) { /* replace variable with it's value */
 	int size = 1, j, i, all_flg = 0;
 	char *name = NULL;
 	char *val = NULL;
-	c = get_sym();
+	get_sym();
 	while (name_sym(c)) { /* reads all name symbols after $ */
 		name = reallocarray(name, ++size, sizeof(char));
 		if (!name) { /* not enough memory */
@@ -165,7 +165,7 @@ void replace_var(void) { /* replace variable with it's value */
 			exit(1);
 		}
 		name[size - 2] = c;
-		c = get_sym();
+		get_sym();
 	}
 	name[size - 1] = '\0';
 	if (!strcmp(name, "HOME"))
@@ -228,7 +228,7 @@ int special(void) {
 		} else  { /* current symbol is an end of line */
 			SPEC_FLG = 1;
 		}
-		c = get_sym();
+		get_sym();
 		if (!usual_sym(c) && (c != '"') && (c != '\'') & (c != '$')) {
 			/* next symbol isn't connected to line */
 			finish_buf();
@@ -239,15 +239,15 @@ int special(void) {
 	}
 	if (c == '#') { /* comment */
 		while ((c != '\n') && (c != EOF))
-			c = get_sym();
+			get_sym();
 		return start();
 	}
 	push(c); /* add first symbol */
-	c = get_sym();
+	get_sym();
 	if (!((c == ';') || (c == '<') || (c == '(') || (c == ')'))) {
 		if (c == prev_c) { /* special word can contain 2 same symbols */
 			push(c);
-			c = get_sym();
+			get_sym();
 		}
 	}
 	finish_buf(); /* transform buffer to complete string */
@@ -265,7 +265,7 @@ void construct(void) {
 		str[i] = '\0';
 	new_buf();
 	new(&lst);
-	c = get_sym();
+	get_sym();
 	start();
 }
 
@@ -276,7 +276,9 @@ list new_list(void) {
 		str[i] = '\0';
 	new_buf();
 	new(&lst);
-	c = get_sym();
+	get_sym();
+    if (c == EOF)
+        return NULL;
 	start();
 	return lst;
 }
