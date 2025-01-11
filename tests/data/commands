@@ -2,7 +2,7 @@ cd ./tests/data
 pwd > file.out
 ls ../ >> file.out
 cat file.out | sort -r > current_dir.txt
-echo $USER > who_am_i.txt ; who >> who_am_i.txt
+echo $HOME > who_am_i.txt ; who >> who_am_i.txt
 cat fil.out || pwd > fpwd
 cat fil.out && pwd >> fpwd
 cd ../

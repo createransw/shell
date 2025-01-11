@@ -18,7 +18,7 @@ $(NAME): $(DEPS) $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 $(TEST_NAME): $(DEPS) $(TEST_OBJ)
-	$(CC) -o test_runner $^ $(CFLAGS) -lcheck
+	$(CC) -o test_runner $^ $(CFLAGS) -lcheck -lm -lsubunit
 
 clean:
 	rm -f $(NAME) $(OBJ) test_runner $(TEST_OBJ)

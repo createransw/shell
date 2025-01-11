@@ -1,0 +1,27 @@
+name: shell CI
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  test_run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y check libcunit1-dev
+
+      - name: Build project
+        run: make
+
+      - name: Test run
+        run: make test
