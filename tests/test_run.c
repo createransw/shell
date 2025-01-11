@@ -121,7 +121,11 @@ int main() {
         execvp("bash", NULL);
     }
     waitpid(process, NULL, 0);
-    dialog();
+    process = fork();
+    if (process == 0) {
+        dialog();
+    }
+    waitpid(process, NULL, 0);
     dup2(out, fileno(stdout));
 
     srunner_run_all(sr, CK_NORMAL);
