@@ -1,6 +1,7 @@
 cd ./tests/data
 pwd > file_r.out
 ls ../ >> file_r.out
+echo $USER >> file_r.out
 cat file_r.out | sort -r > current_dir_r.txt
 echo $USER > who_am_i_r.txt ; who >> who_am_i_r.txt
 cat fil.out || pwd > fpwd_r
