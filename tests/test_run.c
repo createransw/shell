@@ -27,7 +27,7 @@ bool cmp_files(const char *file1, const char *file2) {
 
 
     while (c1 != EOF) {
-        fputc(c1, stdout);
+        fputc(c2, stdout);
         if (c1 != c2) {
             fclose(f1);
             fclose(f2);
